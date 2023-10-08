@@ -19,6 +19,7 @@ import {
   useColorMode
 } from '@chakra-ui/react'
 import { HamburgerIcon, CloseIcon, AddIcon } from '@chakra-ui/icons'
+import { useRouter } from 'next/router';
 
 const Links = ['Dashboard', 'Projects', 'Team']
 
@@ -43,6 +44,7 @@ const NavLink = (props) => {
 export default function WithAction(props) {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const { colorMode, toggleColorMode } = useColorMode();
+  const router = useRouter();
 
   return (
     <Box  borderRadius='xl' bg={useColorModeValue('gray.200', 'gray.800')} p={5}>
@@ -61,6 +63,7 @@ export default function WithAction(props) {
           <HStack spacing={8} alignItems={'center'}>
             <Box>Logo</Box>
             <HStack as={'nav'} spacing={4} display={{ base: 'none', md: 'flex' }}>
+            <Button bg='transparent' onClick={() => router.push('/clinicCase/create')}>Criar checklist</Button>
               {Links.map((link) => (
                 <NavLink key={link}>{link}</NavLink>
               ))}
@@ -68,12 +71,13 @@ export default function WithAction(props) {
           </HStack>
           <Flex alignItems={'center'}>
             <Button
+              onClick={() => router.push('/clinicCase/show')}
               variant={'solid'}
               colorScheme={'teal'}
               size={'sm'}
               mr={4}
               leftIcon={<AddIcon />}>
-              Action
+              Começar
             </Button>
             <Menu>
               <MenuButton
