@@ -1,5 +1,7 @@
 'use client'
 
+// const  element = document.querySelector('.layout-container');
+// element.id = 'setCodRoom';
 import {
   Box,
   Flex,
@@ -71,7 +73,7 @@ export default function WithAction(props) {
           </HStack>
           <Flex alignItems={'center'}>
             <Button
-              onClick={() => router.push('/clinicCase/show')}
+              onClick={() => router.push('/clinicCase/listall')}
               variant={'solid'}
               colorScheme={'teal'}
               size={'sm'}
