@@ -5,7 +5,9 @@ import theme from "./theme";
 import WithAction from "../components/sidebar/menuzao";
 import { ContextProvider } from "../context/context";
 
+
 export default function App({ Component, pageProps }) {
+    
     return (
         <ChakraProvider theme={theme}>
             <ContextProvider>

@@ -28,6 +28,7 @@ import {
     StepTitle,
     StepDescription,
     StepSeparator,
+    Spinner,
 } from "@chakra-ui/react";
 
 import AutoComplete from "../../../components/ui/autoComplete";
@@ -39,56 +40,57 @@ const steps = [
 
 import { baseUrl } from "../../../config/baseInfos";
 
-import {myContext} from '../../../context/context'
-import io from 'socket.io-client';
+import { myContext } from "../../../context/context";
+import io from "socket.io-client";
 
 import Table from "../../../components/ui/table";
 
 function Example() {
+    const [loading, setLoading] = useState(false);
     const { activeStep, goToNext, goToPrevious } = useSteps({
         index: 0,
         count: steps.length,
     });
+    const { currentChecklist, setSocket, socket } = myContext();
 
-    const connectToSocket = () => {}
+    const connectToSocket = async () => {
+        // const newSocket = io(`${baseUrl}`, {
+        //     withCredentials: true, // Permite compartilhar cookies/credenciais com o servidor
+        // });
+        // setSocket(newSocket);
+        // console.log(1);
+        socket.on("connect", () => {
+            console.log("Conectado ao servidor Socket.io");
+        });
 
-    const socket = io(`${baseUrl}`, {
-        withCredentials: true, // Permite compartilhar cookies/credenciais com o servidor
-      });
+        socket.on("create_room:response", (response) => {
+            if (response.status === "success") {
+                console.log("oie");
+                setLoading(true);
+                setTimeout(() => {
+                    router.push({
+                        pathname: "/clinicCase/show",
+                    });
+                }, 3000);
+            }
+        });
+    };
 
-    const {currentChecklist, setSocket} = myContext();
     const router = useRouter();
     const toast = useToast();
     const data = router.query;
 
-
+    useEffect(() => {
+        connectToSocket();
+    }, []);
 
     useEffect(() => {
-        socket.on('connect', () => {
-            console.log('Conectado ao servidor Socket.io');
-
-            socket.on('create_room:response', () =>{
-                console.log('Sala cheia')
-            })
-        });
-      
         if (!currentChecklist.type) {
-            setTimeout(() => {
-                router.push({
-                    pathname: "/clinicCase/listall",
-                });
-            }, 3000);
-            toast({
-                title: ":(",
-                description: "Não foi possivel carregar os dados, vamos te redirecionar",
-                status: "error",
-                duration: 3000,
-                isClosable: true,
+            router.push({
+                pathname: "/clinicCase/listall",
             });
         }
-        console.log(currentChecklist)
-
-
+        console.log(currentChecklist);
     }, []);
 
     const handleNext = () => {
@@ -102,17 +104,26 @@ function Example() {
     };
 
     const handlePrev = () => {
+        if (loading) {
+            toast({
+                title: ":(",
+                description: "Estamos criando a sala, não é possivel voltar.",
+                status: "error",
+                duration: 3000,
+                isClosable: true,
+            });
+            return;
+        }
         goToPrevious();
     };
 
     const step0 = () => {
         return (
-            <Flex align='center' gap={3} direction='column'>
+            <Flex align="center" gap={3} direction="column">
                 {/* <Table data={dataTable}/> */}
                 <Flex gap={10}>
-
-                <Button colorScheme='teal'>{currentChecklist.type}</Button>
-                <Heading color='teal.300'>{currentChecklist.name}</Heading>
+                    <Button colorScheme="teal">{currentChecklist.type}</Button>
+                    <Heading color="teal.300">{currentChecklist.name}</Heading>
                 </Flex>
                 <Text>{currentChecklist.description}</Text>
             </Flex>
@@ -131,25 +142,27 @@ function Example() {
         );
     };
 
-    const joinRoom = () => {
-        console.log('oie')
-    
-          socket.emit("create_room", (answer) => {
-            // ...
-          });
-    }
+    const createRoom = () => {
+        socket.emit("create_room", (response) => {});
+    };
 
     const step2 = () => {
-
-    
         return (
-            <Flex direction="column" gap={10} align='center'>
-                <Heading>seila</Heading>
-                
-                <Button onClick={joinRoom} size="lg">
-                    <Text>Criar Sala</Text>
-                </Button>
-                
+            <Flex direction="column" gap={10} align="center">
+                {loading ? (
+                    <>
+                        <Heading size="sm" mt={10}>
+                            Estamos criando a sala para você, assim que estiver pronta você será redirecionado(a)
+                        </Heading>
+                        <Spinner hickness="1px" speed="0.65s" emptyColor="gray.200" size="xl" color="teal" />
+                    </>
+                ) : (
+                    <>
+                        <Button mt={20} colorScheme="teal" onClick={createRoom} size="lg">
+                            <Text>Criar Sala</Text>
+                        </Button>
+                    </>
+                )}
             </Flex>
         );
     };
@@ -178,7 +191,7 @@ function Example() {
                 {activeStep === 2 && step2()}
             </Box>
             <Box mt={4} align="end">
-                <Button onClick={handlePrev} disabled={activeStep === 0} mr={10}>
+                <Button onClick={handlePrev} disabled={activeStep === 0} mr={10} colorScheme={loading ? "gray.600" : "gray"}>
                     Voltar
                 </Button>
                 {activeStep < steps.length - 1 ? (
@@ -186,7 +199,9 @@ function Example() {
                         Avançar
                     </Button>
                 ) : (
-                    <Button onClick={() => router.push("/clinicCase/show")}>Concluir</Button>
+                    <Button onClick={createRoom} colorScheme={loading ? "gray.600" : "blue"}>
+                        Criar Sala
+                    </Button>
                 )}
             </Box>
         </Box>
