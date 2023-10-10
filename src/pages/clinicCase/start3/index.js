@@ -50,11 +50,13 @@ function Example() {
         count: steps.length,
     });
 
+    const connectToSocket = () => {}
+
     const socket = io(`${baseUrl}`, {
         withCredentials: true, // Permite compartilhar cookies/credenciais com o servidor
       });
 
-    const {currentChecklist} = myContext();
+    const {currentChecklist, setSocket} = myContext();
     const router = useRouter();
     const toast = useToast();
     const data = router.query;
@@ -64,7 +66,11 @@ function Example() {
     useEffect(() => {
         socket.on('connect', () => {
             console.log('Conectado ao servidor Socket.io');
-          });
+
+            socket.on('create_room:response', () =>{
+                console.log('Sala cheia')
+            })
+        });
       
         if (!currentChecklist.type) {
             setTimeout(() => {
@@ -128,7 +134,7 @@ function Example() {
     const joinRoom = () => {
         console.log('oie')
     
-          socket.emit("join room", (answer) => {
+          socket.emit("create_room", (answer) => {
             // ...
           });
     }
