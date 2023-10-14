@@ -59,17 +59,15 @@ function Example() {
         // });
         // setSocket(newSocket);
         // console.log(1);
-        socket.on("connect", () => {
-            console.log("Conectado ao servidor Socket.io");
-        });
 
-        socket.on("create_room:response", (response) => {
+        socket.on("createRoom:response", (response) => {
             if (response.status === "success") {
-                console.log("oie");
+                console.log(response);
                 setLoading(true);
                 setTimeout(() => {
                     router.push({
-                        pathname: "/clinicCase/show",
+                        pathname: `/clinicCase/show`,
+                        query: { roomId: response.data.roomId },
                     });
                 }, 3000);
             }
@@ -143,26 +141,18 @@ function Example() {
     };
 
     const createRoom = () => {
-        socket.emit("create_room", (response) => {});
+        if (currentChecklist._id) {
+            console.log("enviando");
+            socket.emit("createRoom", { id: String(currentChecklist._id) });
+        }
     };
 
     const step2 = () => {
         return (
             <Flex direction="column" gap={10} align="center">
-                {loading ? (
-                    <>
-                        <Heading size="sm" mt={10}>
-                            Estamos criando a sala para você, assim que estiver pronta você será redirecionado(a)
-                        </Heading>
-                        <Spinner hickness="1px" speed="0.65s" emptyColor="gray.200" size="xl" color="teal" />
-                    </>
-                ) : (
-                    <>
-                        <Button mt={20} colorScheme="teal" onClick={createRoom} size="lg">
-                            <Text>Criar Sala</Text>
-                        </Button>
-                    </>
-                )}
+                <Button mt={20} colorScheme="teal" onClick={createRoom} size="lg" isLoading={loading ? true : false} loadingText='Criando sala'>
+                    <Text>Criar Sala</Text>
+                </Button>
             </Flex>
         );
     };

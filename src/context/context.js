@@ -9,21 +9,26 @@ import { baseUrl } from "@/config/baseInfos";
 export function ContextProvider({ children }) {
     const [currentChecklist, setCurrentChecklist] = useState({});
     const [socket, setSocket] = useState(null);
-    
+    const [isClient, setIsClient] = useState(false)
  
-      const newSocket = io(`${baseUrl}`, {
-        withCredentials: true, // Permite compartilhar cookies/credenciais com o servidor
-      });
-      newSocket.on("connect", () => {
-        console.log("Conectado ao servidor Socket.io");
-      });
     
+   useEffect(() => {
+    
+    const newSocket = io(`${baseUrl}`, {
+      withCredentials: true, // Permite compartilhar cookies/credenciais com o servidor
+    });
+    newSocket.on("connect", () => {
+      console.log("Conectado ao servidor Socket.io");
+    });
+    setSocket(newSocket);
+    setIsClient(true)
    
+   }, []);
 
   
    
 
-    return <UserContext.Provider value={{ currentChecklist, setCurrentChecklist, socket, setSocket, newSocket }}>{children}</UserContext.Provider>;
+    return ( isClient ? <UserContext.Provider value={{ currentChecklist, setCurrentChecklist, socket, setSocket }}>{children}</UserContext.Provider> : null);
 }
 
 export function myContext() {

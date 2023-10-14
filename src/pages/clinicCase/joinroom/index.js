@@ -3,12 +3,16 @@ import { Box, Flex, Heading, Input, Text, Spinner, Button, Menu, MenuButton, Men
 
 
 import { myContext } from "@/context/context";
+import { useRouter } from "next/router";
+
 const JoinRoom = () => {
     const [inputValue, setInputValue] = useState("");
     const inputRef = useRef(null);
     const [loading, setLoading] = useState(false); 
 
-    const { newSocket } = myContext();
+    const { socket, setCurrentChecklist } = myContext();
+
+    const router = useRouter();
 
     const handlePasteClick = () => {
         navigator.clipboard.readText().then((text) => {
@@ -16,9 +20,30 @@ const JoinRoom = () => {
         });
     };
 
+    useEffect(() => {
+        socket.on('joinRoom:response', (response) => {
+            
+            let {message, status, data} = response;
+            if(!data) return false
+            data = data[0];
+            console.log(data)
+            if(status === 'success' && message === 'joinedRoom') {
+                setCurrentChecklist(data);
+                   router.push({
+                        pathname: `/clinicCase/show`,
+                        query: { roomId: inputValue },
+                    });
+            } else {
+                setLoading(false);
+            }
+        })
+    }, []);
+
     const handleJoinRoom = () => {
         setLoading(true);
-        newSocket.emit("joinRoom", inputValue);
+        console.log('enviando joinroom', typeof inputValue);
+        socket.emit("joinRoom", {pid: inputValue});
+     
     }
 
     return (
