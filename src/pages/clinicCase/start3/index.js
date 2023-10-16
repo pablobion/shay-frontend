@@ -66,7 +66,7 @@ function Example() {
                 setLoading(true);
                 setTimeout(() => {
                     router.push({
-                        pathname: `/clinicCase/show`,
+                        pathname: `/clinicCase/show/creator`,
                         query: { roomId: response.data.roomId },
                     });
                 }, 3000);

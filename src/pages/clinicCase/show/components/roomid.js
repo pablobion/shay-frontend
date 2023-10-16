@@ -17,9 +17,9 @@ const RoomIdComponent = ({roomIdState}) => {
     };
 
     return (
-        <Flex justify="end" w="100%">
+        <Flex justify="end" align='center' w="100%" h={70}>
             <Tooltip label="Clique para copiar">
-                <Button gap={3} colorScheme="yellow" onClick={() => handleCopy("teste copiando")}>
+                <Button fontSize='20px' gap={3} colorScheme="yellow" onClick={() => handleCopy("teste copiando")}>
                     <MdOutlineContentCopy />
                     {roomIdState}
                 </Button>

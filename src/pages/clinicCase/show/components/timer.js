@@ -2,10 +2,8 @@ import { useState, useEffect } from "react";
 import { Box, Button, useColorModeValue } from "@chakra-ui/react";
 
 export default function (props) {
-
     const [timer, setTimer] = useState(0); // Estado para armazenar o valor do timer
     const [isTimerRunning, setIsTimerRunning] = useState(false);
-
 
     const formatTime = (timeInSeconds) => {
         const minutes = Math.floor(timeInSeconds / 60)
@@ -31,19 +29,16 @@ export default function (props) {
             clearInterval(interval);
         }
 
-
         return () => {
             clearInterval(interval); // Limpa o intervalo quando o componente é desmontado
         };
     }, [isTimerRunning]);
 
     return (
-        <Box align="center" p={5} spacing={4} flex={1} borderRadius="xl" bg={useColorModeValue("gray.100", "gray.700")}>
-            <Box>
-                <Button w={130} colorScheme={isTimerRunning ? "teal" : "gray"}>
-                    {formatTime(timer)}
-                </Button>
-            </Box>
+        <Box w="100%" align="center" p={3} spacing={4} flex={1} borderRadius="xl" bg={useColorModeValue("gray.100", "gray.700")}>
+            <Button w={130} colorScheme={isTimerRunning ? "teal" : "gray"}>
+                {formatTime(timer)}
+            </Button>
             <Button colorScheme="blue" onClick={startTimer} isDisabled={isTimerRunning}>
                 Começar
             </Button>

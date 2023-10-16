@@ -20,6 +20,8 @@ import {
     Tooltip,
 } from "@chakra-ui/react";
 
+import { CloseIcon, AddIcon } from "@chakra-ui/icons";
+import { useRouter } from "next/router";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
@@ -33,6 +35,7 @@ function ChecklistScreen() {
     const [isRoteiroModalOpen, setRoteiroModalOpen] = useState(false);
     const [isTarefasModalOpen, setTarefasModalOpen] = useState(false);
     const [items, setItems] = useState([]);
+    const [auxPoint, setAuxPoint] = useState("");
 
     const openCenarioModal = () => setCenarioModalOpen(true);
     const closeCenarioModal = () => setCenarioModalOpen(false);
@@ -43,6 +46,8 @@ function ChecklistScreen() {
 
     const [isImageModalOpen, setIsImageModalOpen] = useState(false);
     const [selectedImage, setSelectedImage] = useState(""); // Armazena a URL da imagem selecionada
+
+    const router = useRouter();
 
     const openImageModal = (imageUrl) => {
         console.log(imageUrl, "eita");
@@ -91,7 +96,7 @@ function ChecklistScreen() {
             questions: [
                 {
                     text: `[Item do PEP AQUI]\n*Adequado:*\n*Parcialmente adequado:*\n*Inadequado:*`,
-                    points: "0,0.5,1",
+                    points: [],
                 },
             ],
         },
@@ -107,6 +112,16 @@ function ChecklistScreen() {
     });
 
     const adicionarLinha = (name) => {
+        console.log("name");
+        if (name === "questions") {
+            console.log("adc linha questions");
+            return formik.setFieldValue(name, [...formik.values[name], { text: "", points: [] }]);
+        }
+
+        if (name === "tasks") {
+            return formik.setFieldValue(name, [...formik.values[name], { text: "" }]);
+        }
+
         formik.setFieldValue(name, [...formik.values[name], {}]);
     };
 
@@ -117,9 +132,23 @@ function ChecklistScreen() {
         );
     };
 
+    const addPoints = (index, value = "1") => {
+        let currentPoints = [...formik.values.questions[index].points];
+        currentPoints.push(value);
+        formik.setFieldValue(`questions[${index}].points`, currentPoints);
+    };
+
+    const removePoints = (index, indexToRemove) => {
+        const updatedQuestions = [...formik.values.questions];
+        updatedQuestions[index].points = updatedQuestions[index].points.filter((_, index) => index !== indexToRemove);
+        formik.setFieldValue("questions", updatedQuestions);
+    };
+
     const sendForm = async () => {
         console.log(formik?.values);
-        
+
+        const value = formik.values;
+
         try {
             const x = await fetch(`${baseUrl}/createClinicCase`, {
                 method: "POST",
@@ -129,7 +158,7 @@ function ChecklistScreen() {
                 body: JSON.stringify(formik.values),
             });
             const response = await x.json();
-            if(x.status === 200){
+            if (x.status === 200) {
                 toast({
                     title: "Checklist salvo com sucesso",
                     description: "Nós salvamos o checklist para você",
@@ -137,9 +166,10 @@ function ChecklistScreen() {
                     duration: 3000,
                     isClosable: true,
                 });
+                router.push("/clinicCase/listall");
             }
-            console.log(response)
-        }catch(e){
+            console.log(response);
+        } catch (e) {
             toast({
                 title: ":(",
                 description: "ops algo aconteceu",
@@ -148,7 +178,6 @@ function ChecklistScreen() {
                 isClosable: true,
             });
         }
-       
     };
 
     const readFile = (event, index) => {
@@ -274,7 +303,7 @@ function ChecklistScreen() {
 
                 {attachsArray.map((item, index) => (
                     <Flex key={index} borderTopWidth={index === 0 ? 0 : 5} borderColor="teal.700" mt={index === 0 ? 0 : 10} pt={10} gap={10}>
-                        <Box gap={5} w='30%'>
+                        <Box gap={5} w="30%">
                             <Input placeholder="Nome do impresso" mb={10} name={`attachs[${index}].name`} value={formik.values.attachs[index]?.name} onChange={formik.handleChange} />
                             <Tooltip label="Ainda não temos como hospedar imagens :(">
                                 <Input name={`attachs[${index}].file`} onChange={(event) => readFile(event, index)} type="file" pt={4} h={16} disabled />
@@ -309,7 +338,7 @@ function ChecklistScreen() {
                                 </ModalContent>
                             </Modal>
                         </Box>
-                        <Box w='60%'>
+                        <Box w="60%">
                             <Textarea
                                 placeHolder="Texto do impresso"
                                 boxShadow="base"
@@ -320,7 +349,7 @@ function ChecklistScreen() {
                                 onChange={formik.handleChange}
                             ></Textarea>
                         </Box>
-                        <Flex align="center" w='5.5%'>
+                        <Flex align="center" w="5.5%">
                             <Button
                                 type="submit"
                                 colorScheme="red"
@@ -366,7 +395,26 @@ function ChecklistScreen() {
                         </Box>
                         <Flex ml={10} justify="end" w="35%">
                             <Box mr={10}>
-                                <Input placeholder="Input" name={`questions[${index}].points`} value={formik.values.questions[index]?.points} onChange={formik.handleChange} />
+                                <Button onClick={() => console.log(item)}>dssdsd</Button>
+                                <Flex gap={1} minH={81}>
+                                    {item.points
+                                        ? item.points.map((elem, indexPoint) => (
+                                              <Flex gap={3} bg="gray" p={2} my={3} borderRadius={10} minW={15} align="center">
+                                                  {elem}
+                                                  <Text onClick={() => removePoints(index, indexPoint)} bg="tomato" p={1} borderRadius={5} size="sm" fontSize={12} cursor="pointer">
+                                                      <CloseIcon />
+                                                  </Text>
+                                              </Flex>
+                                          ))
+                                        : null}
+                                </Flex>
+                                <Flex>
+                                    <Input placeholder="Input" onChange={(e) => setAuxPoint(e.target.value)} />
+                                    <Button ml={3} onClick={() => addPoints(index, auxPoint)}>
+                                        <AddIcon />
+                                    </Button>
+                                </Flex>
+
                                 <Select placeholder="Selecione" mt={2} name={`questions[${index}].category`} value={formik.values.questions[index]?.category} onChange={formik.handleChange}>
                                     <option value="ac" selected>
                                         Acolhimento

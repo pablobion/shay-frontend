@@ -30,7 +30,7 @@ const JoinRoom = () => {
             if(status === 'success' && message === 'joinedRoom') {
                 setCurrentChecklist(data);
                    router.push({
-                        pathname: `/clinicCase/show`,
+                        pathname: `/clinicCase/show/creator`,
                         query: { roomId: inputValue },
                     });
             } else {

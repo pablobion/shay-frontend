@@ -33,8 +33,8 @@ export default function WithAction(props) {
     const router = useRouter();
 
     return (
-        <Box borderRadius="xl" bg={useColorModeValue("gray.200", "gray.800")} p={5}>
-            <Box bg={useColorModeValue("white", "gray.900")} px={4} m={5} borderRadius="xl">
+        <Box borderRadius="xl" bg={useColorModeValue("gray.200", "gray.800")} p={7}>
+            <Box bg={useColorModeValue("white", "gray.900")} px={4} m={2} borderRadius="xl">
                 <Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
                     <IconButton size={"md"} icon={isOpen ? <CloseIcon /> : <HamburgerIcon />} aria-label={"Open Menu"} display={{ md: "none" }} onClick={isOpen ? onClose : onOpen} />
                     <Button onClick={toggleColorMode}>{colorMode === "light" ? "Dark Mode" : "Light Mode"}</Button>
@@ -90,7 +90,7 @@ export default function WithAction(props) {
                     </Box>
                 ) : null}
             </Box>
-            <Box borderRadius="xl" bg={useColorModeValue("white", "gray.900")} m={5} p={5}>
+            <Box borderRadius="xl" bg={useColorModeValue("white", "gray.900")} m={2} p={7}>
                 {props.children}
             </Box>
         </Box>

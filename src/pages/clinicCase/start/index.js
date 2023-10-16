@@ -45,7 +45,7 @@ function Example() {
             <Box mb={400}>
             <AutoComplete/>
             </Box>
-            <Button size='lg' colorScheme='teal' onClick={() => router.push("/clinicCase/show")}>Começar 🚀</Button>
+            <Button size='lg' colorScheme='teal' onClick={() => router.push("/clinicCase/show/creator")}>Começar 🚀</Button>
         </Box>
     );
 }
