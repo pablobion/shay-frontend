@@ -10,7 +10,7 @@ const AttachComponent = (props) => {
     }
     return (
         <Box>
-            <Accordion allowToggle mt={3}>
+            <Accordion allowToggle mt={3} bg={isUnlock ? 'teal.700' : ''} borderRadius={10}>
                 <AccordionItem border={0}>
                     <h2>
                         <AccordionButton>
@@ -30,7 +30,7 @@ const AttachComponent = (props) => {
                                 </Text>
                             </Box>
                             <Box w='5%'>
-                                <Tooltip label='Hover me'>
+                                <Tooltip label={isUnlock ? 'Impresso Enviado!' : 'Enviar impresso'}>
 
  
                                     <Button _hover={{ bg: "teal.400" }} onClick={handleLock} bg={ isUnlock ? 'teal.400' : 'gray' } isDisabled={isUnlock}>

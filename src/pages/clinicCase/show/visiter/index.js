@@ -134,8 +134,8 @@ function ChecklistViewScreen() {
             </Box>
 
             <Box w="15%" ml={3}>
-                <UsersStatus visiterJoinedRoom={visiterJoinedRoom} whoIs='actor' />
-                <TimeComponent whoIs='actor' />
+                <UsersStatus visiterJoinedRoom={visiterJoinedRoom} whoIs='visiter' />
+                <TimeComponent />
             </Box>
         </Flex>
     );

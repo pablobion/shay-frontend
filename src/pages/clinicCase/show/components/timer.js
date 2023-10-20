@@ -39,9 +39,11 @@ export default function (props) {
             <Button w={130} colorScheme={isTimerRunning ? "teal" : "gray"}>
                 {formatTime(timer)}
             </Button>
-            <Button colorScheme="blue" onClick={startTimer} isDisabled={isTimerRunning}>
-                Começar
-            </Button>
+            {props.whoIs === "actor" && (
+                <Button mt={3} colorScheme="blue" onClick={startTimer} isDisabled={isTimerRunning}>
+                    Começar
+                </Button>
+            )}
         </Box>
     );
 }
