@@ -45,6 +45,10 @@ function ChecklistViewScreen() {
             console.log("chegou visitante");
             setVisiterJoinedRoom(true);
         });
+
+        socket.on("receiveAttach", (response) => {
+            alert(response)
+        });
     }, []);
 
     const textareaStyle = {
@@ -97,7 +101,7 @@ function ChecklistViewScreen() {
                                 {currentChecklist.attachs &&
                                     (currentChecklist?.attachs).map((attach, index) => (
                                         <Box bg={useColorModeValue("gray.300", "gray.600")} borderRadius={10}>
-                                            <AttachsComponent items={currentChecklist.attachs} />
+                                            {/* <AttachsComponent items={currentChecklist.attachs} /> */}
                                         </Box>
                                     ))}
                             </Box>

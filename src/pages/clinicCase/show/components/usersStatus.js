@@ -9,9 +9,9 @@ const UserStatus = ({ visiterJoinedRoom, whoIs }) => {
                 <Text>Atriz {whoIs === 'actor' ? '(Você)' : '' }</Text>
             </Flex>
             <Flex align="center">
-                <Box bg={visiterJoinedRoom ? "green" : "gray"} w={3} h={3} borderRadius="50%" mr={3} align="center" />
+                <Box bg={visiterJoinedRoom || whoIs === 'visiter'   ? "green" : "gray"} w={3} h={3} borderRadius="50%" mr={3} align="center" />
                 <Text>Médico(a) {whoIs === 'visiter' ? '(Você)' : '' }</Text>
-                {visiterJoinedRoom ? <></> : <Spinner ml={2} size="sm" />}
+                {visiterJoinedRoom || whoIs === 'visiter' ? <></> : <Spinner ml={2} size="sm" />}
             </Flex>
         </Flex>
     );

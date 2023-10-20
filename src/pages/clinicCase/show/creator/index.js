@@ -52,6 +52,17 @@ function ChecklistViewScreen() {
       height: 300,
       fontSize: 14
     };
+
+    const handleSendAttach = (index) => {
+        toast({
+            title: "Impresso enviado com sucesso!",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+        });
+        console.log(roomId);
+        socket.emit("sendAttach", {pid: roomId, index: index});
+    }
     
 
     return (
@@ -97,7 +108,7 @@ function ChecklistViewScreen() {
                                 {currentChecklist.attachs &&
                                     (currentChecklist?.attachs).map((attach, index) => (
                                         <Box bg={useColorModeValue("gray.300", "gray.600")} borderRadius={10}>
-                                            <AttachsComponent items={currentChecklist.attachs} />
+                                            <AttachsComponent attach={attach} index={index} handleSendAttach={handleSendAttach} />
                                         </Box>
                                     ))}
                             </Box>
